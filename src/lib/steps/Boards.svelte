@@ -1,48 +1,21 @@
 <script>
     import { onMount } from "svelte";
-    import GloSDK from "@axosoft/glo-sdk";
+    import { fetchBoards, boards } from "$lib/stores";
     export let stepIndex;
     export let gloPat;
+    export let boardId;
 
-    let boards = [];
     onMount(async () => {
-        boards = await GloSDK(gloPat).boards.getAll({
-            fields: ["name", "labels", "columns", "archived_columns"],
-        });
-        const cards = await GloSDK(gloPat).boards.cards.getAll(
-            "6059ef1d2ad1e3001124146f",
-            {
-                fields: [
-                    "archived_date",
-                    "assignees",
-                    "attachment_count",
-                    "column_id",
-                    "comment_count",
-                    "created_by",
-                    "created_date",
-                    "due_date",
-                    "description",
-                    "labels",
-                    "name",
-                    "total_task_count",
-                    "milestone",
-                    "is_divider",
-                ],
-            }
-        );
-        const user = await GloSDK(gloPat).users.getCurrentUser();
-        console.log("boards", boards);
-        console.log("cards", cards);
-        console.log("user", user);
+        fetchBoards(gloPat);
     });
 </script>
 
-<select class="select select-accent mb-6">
+<select bind:value={boardId} class="select select-accent mb-6">
     <option disabled="disabled" selected="selected"
         >Select board to migrate</option
     >
-    {#each boards as board}
-        <option>{board.name}</option>
+    {#each $boards as board}
+        <option value={board.id}>{board.name}</option>
     {/each}
 </select>
 

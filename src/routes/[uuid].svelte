@@ -13,6 +13,7 @@
     let time = null;
 
     let stepIndex = 0;
+    let boardId = 0;
     let gloPat = "pe7828f3877aa47a25972bef3ad2e5cb3210fd9ea";
 
     onMount(async () => {
@@ -73,9 +74,9 @@
     {#if stepIndex === 0}
         <Glo bind:stepIndex bind:gloPat />
     {:else if stepIndex === 1}
-        <Boards bind:stepIndex bind:gloPat />
+        <Boards bind:boardId bind:stepIndex bind:gloPat />
     {:else if stepIndex === 2}
-        <Trello />
+        <Trello bind:boardId bind:gloPat />
     {:else if stepIndex === 3}
         <Confirmation />
     {/if}
