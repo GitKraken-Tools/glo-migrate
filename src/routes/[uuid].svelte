@@ -13,8 +13,7 @@
     let time = null;
 
     let stepIndex = 0;
-    let boardId = 0;
-    let gloPat = "pe7828f3877aa47a25972bef3ad2e5cb3210fd9ea";
+    let boardId = "";
 
     onMount(async () => {
         const res = await fetch(`/api/sessions/${$page.params.uuid}`);
@@ -22,17 +21,20 @@
             goto("/");
         }
         session = await res.json();
+        console.log("SESSION", session);
+        stepIndex = session.step;
+        boardId = session.boardId;
         time = getTimeRemaining(session.created_at);
         checkLifespan();
-        window.setInterval(() => {
+        let interval = window.setInterval(() => {
             time = getTimeRemaining(session.created_at);
-            checkLifespan();
+            checkLifespan(interval);
         }, 1000);
-        console.log(session);
     });
 
-    const checkLifespan = () => {
+    const checkLifespan = (interval) => {
         if (time.minutes == 0 && time.seconds == 0) {
+            window.clearInterval(interval);
             goto("/");
             // delete the entry
         }
@@ -61,24 +63,24 @@
     <div class="my-6 border-accent border-t" />
 
     <ul class="w-full steps mb-6">
-        <li class="step {stepIndex >= 0 ? 'step-accent' : ''}">Glo PAT</li>
+        <li class="step {stepIndex >= 0 ? 'step-accent' : ''}">Glo Auth</li>
         <li class="step {stepIndex >= 1 ? 'step-accent' : ''}">
             Select Glo Board
         </li>
         <li class="step {stepIndex >= 2 ? 'step-accent' : ''}">
-            {session.target} PAT
+            {session.target} Link
         </li>
         <li class="step {stepIndex >= 3 ? 'step-accent' : ''}">Confirmation</li>
     </ul>
 
     {#if stepIndex === 0}
-        <Glo bind:stepIndex bind:gloPat />
+        <Glo bind:stepIndex />
     {:else if stepIndex === 1}
-        <Boards bind:boardId bind:stepIndex bind:gloPat />
+        <Boards bind:session bind:boardId bind:stepIndex />
     {:else if stepIndex === 2}
-        <Trello bind:boardId bind:gloPat />
+        <Trello bind:session bind:stepIndex bind:boardId />
     {:else if stepIndex === 3}
-        <Confirmation />
+        <Confirmation bind:session />
     {/if}
 {:else}
     <i class="fas fa-cog fa-spin" />

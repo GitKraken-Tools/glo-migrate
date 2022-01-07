@@ -14,8 +14,10 @@ export const init = async (db) => {
             return db.schema.createTable('sessions', function (t) {
                 t.increments('id').primary();
                 t.string('uuid');
+                t.string('boardId');
                 t.string('target');
                 t.string('users');
+                t.integer('step');
                 t.timestamps();
             });
         }

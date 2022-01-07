@@ -5,8 +5,8 @@ export const boards = writable([]);
 export const cards = writable([]);
 export const user = writable(null);
 
-export const fetchBoards = async (token) => {
-    const boards$ = await GloSDK(token).boards.getAll({
+export const fetchBoards = async (session) => {
+    const boards$ = await GloSDK(session.users[0].token).boards.getAll({
         fields: ["name", "labels", "columns", "archived_columns"],
     });
     boards.set(boards$)
@@ -35,11 +35,6 @@ export const fetchCards = async (token, boardId) => {
         }
     );
     cards.set(cards$);
-}
-
-export const fetchUser = async (token) => {
-    const user$ = await GloSDK(token).users.getCurrentUser();
-    user.set(user$);
 }
 
 export const mapData = (board, cards, users) => {

@@ -5,6 +5,7 @@ module.exports = {
             'opensans': ['"Open Sans"', 'sans-serif']
         },
         colors: {
+            'white': '#FFFFFF',
             'trello': '#036BA7',
             'jira': '#0252CC',
             'github': 'black',

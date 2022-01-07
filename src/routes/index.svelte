@@ -32,6 +32,8 @@
     };
 </script>
 
+<pre>{JSON.stringify(import.meta.env, null, 3)}</pre>
+
 <h1 class="card-title">Welcome to the Glo Migrator</h1>
 <p class="font-light">
     This tool will migrate your Glo board to a different platform.

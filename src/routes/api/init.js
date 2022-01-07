@@ -8,8 +8,10 @@ export const post = async (request) => {
     await init(db);
     await db('sessions').insert({
         uuid: newUuid,
-        target: 'Trello',
-        users: '',
+        target: target,
+        boardId: '',
+        step: 0,
+        users: '[]',
         created_at: new Date().getTime(),
         updated_at: new Date().getTime(),
     });
