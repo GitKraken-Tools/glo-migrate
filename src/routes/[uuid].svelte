@@ -80,7 +80,7 @@
     {:else if stepIndex === 2}
         <Trello bind:session bind:stepIndex bind:boardId />
     {:else if stepIndex === 3}
-        <Confirmation bind:session />
+        <Confirmation bind:session bind:boardId />
     {/if}
 {:else}
     <i class="fas fa-cog fa-spin" />
