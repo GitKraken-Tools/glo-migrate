@@ -7,14 +7,8 @@ export const get = async (request) => {
     const verifier = request.url.searchParams.get('oauth_verifier');
     const tokenSecret = tokens[token];
 
-    console.log('TOKENS', tokens)
-    console.log('Token', tokens[token]);
-
     const saveCreds = new Promise((resolve, reject) => {
         Auth(uuid, gloId).getOAuthAccessToken(token, tokenSecret, verifier, async function (error, accessToken, accessTokenSecret, results) {
-            // In a real app, the accessToken and accessTokenSecret should be stored
-
-            console.log('tokens', accessToken, accessTokenSecret);
             await fetch(`http://localhost:3000/api/sessions/${uuid}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

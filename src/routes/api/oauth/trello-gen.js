@@ -11,21 +11,12 @@ export const get = async (request) => {
 
     const getUrl = new Promise((resolve, reject) => {
         Auth(uuid, gloId).getOAuthRequestToken((error, token, tokenSecret, results) => {
-            // oauth_secrets[token] = tokenSecret;
-            // console.log('TOKEN SECRET', tokenSecret);
             tokens[token] = tokenSecret;
             resolve(`${authorizeURL}?oauth_token=${token}&name=${appName}&scope=${scope}&expiration=${expiration}`);
-            // response.redirect(``);
-
         });
     });
 
     let url = await getUrl;
-
-
-    console.log('URL', url);
-
-    // console.log(Auth);
 
     return {
         headers: { Location: url },
