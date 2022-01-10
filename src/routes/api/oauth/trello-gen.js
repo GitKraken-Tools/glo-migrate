@@ -6,7 +6,7 @@ export const get = async (request) => {
 
     const authorizeURL = "https://trello.com/1/OAuthAuthorizeToken";
     const appName = "Glo Migrator";
-    const scope = 'read';
+    const scope = 'read,write';
     const expiration = '1hour';
 
     const getUrl = new Promise((resolve, reject) => {

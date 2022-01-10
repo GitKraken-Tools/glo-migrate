@@ -2,6 +2,10 @@
     import { page } from "$app/stores";
 </script>
 
-<a class="btn btn-accent" href="/api/oauth/boards-gen?uuid={$page.params.uuid}">
+<a
+    target="_blank"
+    class="btn btn-accent"
+    href="/api/oauth/boards-gen?uuid={$page.params.uuid}"
+>
     <i class="fab fa-gitkraken mr-2" /> Authorize Glo
 </a>
