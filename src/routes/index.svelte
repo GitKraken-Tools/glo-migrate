@@ -1,38 +1,16 @@
 <script>
     import { goto } from "$app/navigation";
+    import { options } from '$lib/options';
 
-    let options = [
-        {
-            label: "Trello",
-            icon: "fab fa-trello",
-            enabled: true,
-        },
-        {
-            label: "Jira",
-            icon: "fab fa-jira",
-            enabled: false,
-        },
-        {
-            label: "Github",
-            icon: "fab fa-github",
-            enabled: false,
-        },
-        {
-            label: "GitLab",
-            icon: "fab fa-gitlab",
-            enabled: false,
-        },
-    ];
+    const create = async (target) => {
+        const session = await fetch('/api/sessions', {method: 'POST', body: JSON.stringify({
+            target
+        })}).then(i => i.json());
 
-    const init = async (target) => {
-        const res = await fetch(`/api/init?target=${target}`, {
-            method: "POST",
-        }).then((i) => i.json());
-        goto(`/${res.uuid}`);
-    };
+        goto(`/${session.uuid}`)
+        console.log(session);
+    } 
 </script>
-
-<pre>{JSON.stringify(import.meta.env, null, 3)}</pre>
 
 <h1 class="card-title">Welcome to the Glo Migrator</h1>
 <p class="font-light">
@@ -47,7 +25,7 @@
 <div class="mt-6 flex gap-6">
     {#each options as option}
         <button
-            on:click={() => init(option.label)}
+            on:click={() => create(option.label)}
             class="btn text-white bg-accent flex-1
             {option.enabled ? '' : 'btn-disabled opacity-20'}"
         >
