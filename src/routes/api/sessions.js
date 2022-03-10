@@ -13,7 +13,6 @@ export const post = async (event) => {
     const body = await event.request.json();
     body.createdOn = new Date().getTime();
     body.uuid = uuidv4();
-    body.source = "Glo";
     const session = await db('sessions').insert(body);
     body.id = session[0];
     return {

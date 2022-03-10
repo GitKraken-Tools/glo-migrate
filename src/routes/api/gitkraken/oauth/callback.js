@@ -15,14 +15,17 @@ export const get = async (event) => {
             code
         })
     }).then(i => i.json());
+    console.log('GITKRAKEN TOKEN', token.access_token);
     // Get Glo user
     const user = await GloSDK(token.access_token).users.getCurrentUser();
     // Add user item
     await fetch(`http://${event.url.host}/api/tokens`, {method: 'POST', body: JSON.stringify({
         sessionId: uuid,
         type: 'GitKraken',
-        sourceToken: token.access_token,
-        sourcePrincipal: JSON.stringify(user)
+        sourceId: user.id,
+        targetId: null,
+        username: user.username,
+        token: token.access_token,
     })});
     return {
         headers: { Location: `/${uuid}` },

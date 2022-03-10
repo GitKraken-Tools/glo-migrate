@@ -4,14 +4,17 @@ module.exports = {
         fontFamily: {
             'opensans': ['"Open Sans"', 'sans-serif']
         },
-        colors: {
-            'white': '#FFFFFF',
-            'trello': '#036BA7',
-            'jira': '#0252CC',
-            'github': 'black',
-            'gitlab': '#D64126'
+        extend: {
+            colors: {
+                'trello': '#036BA7',
+                'jira': '#0252CC',
+                'gitlab': '#D64126',
+                'background': '#1B2125',
+                'foreground': '#20313F',
+                'accent': '#2D3E51',
+                'primary': '#20C0C0'
+            }
         },
-        extend: {},
     },
-    plugins: [require('daisyui')],
+    plugins: [],
 }
