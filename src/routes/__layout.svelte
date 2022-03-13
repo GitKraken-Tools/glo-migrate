@@ -1,5 +1,5 @@
 <div class="flex items-center content-center h-screen w-screen">
-    <div class="mx-auto w-[800px] -mt-36 p-6">
+    <div class="mx-auto w-[600px] -mt-36 p-6">
         <div>
             <img src="/gitkraken_glo.png" alt="logo" class="w-20 m-6 mx-auto" />
         </div>
