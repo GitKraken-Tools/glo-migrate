@@ -20,8 +20,8 @@ import Session from "$lib/components/Session.svelte";
 
 <a href="/new">
     <button class="bg-primary hover:opacity-80 text-white p-3 rounded-md w-full mt-6">
-        <i class="fab fa-gitkraken" />
-        Connect GitKraken
+        <i class="fas fa-rocket" />
+        Continue
     </button>
 </a>
 
