@@ -1,11 +1,8 @@
 import {db} from "$lib/db";
 
 export const get = async (event) => {
-    const sessionUUID = event.params.uuid;
-    const sessions = await db('sessions').select('*').where('uuid', sessionUUID);
-    if (sessions.length === 0) {
-        return Response.redirect(`http://${event.url.host}/`, 302)
-    }
+    const gitKrakenId = event.locals.gitkrakenId;
+    const sessions = await db('sessions').select('*').where('createdBy', gitKrakenId);
 
     for (let i = 0; i < sessions.length; i++) {
         const users = await Promise.allSettled(
@@ -23,7 +20,7 @@ export const get = async (event) => {
 
     return {
         body: {
-            session: sessions[0]
+            sessions
         }
     }
 }

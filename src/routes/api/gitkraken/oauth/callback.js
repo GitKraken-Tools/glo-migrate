@@ -1,3 +1,4 @@
+import { db } from "$lib/db";
 import GloSDK from "@axosoft/glo-sdk";
 
 export const get = async (event) => {
@@ -19,16 +20,27 @@ export const get = async (event) => {
     // Get Glo user
     const user = await GloSDK(token.access_token).users.getCurrentUser();
     // Add user item
-    await fetch(`http://${event.url.host}/api/tokens`, {method: 'POST', body: JSON.stringify({
-        sessionId: uuid,
-        type: 'GitKraken',
-        sourceId: user.id,
-        targetId: null,
-        username: user.username,
-        token: token.access_token,
-    })});
+    let profile = await db('users').select('*').where('gitKrakenId', user.id);
+    if (profile.length === 0) {
+        profile = {
+            gitkrakenUsername: user.username,
+            gitKrakenId: user.id,
+            tokens: JSON.stringify([
+                {
+                    type: 'GitKraken',
+                    id: user.id,
+                    token: token.access_token
+                }
+            ]),
+            createdOn: new Date().getTime()
+        };
+        await db('users').insert(profile);
+    }
     return {
-        headers: { Location: `/${uuid}` },
+        headers: { 
+            Location: '/',
+            'Set-Cookie': `gitKrakenId=${user.id}; Path=/`,
+        },
         status: 302
     }
 }

@@ -1,3 +1,20 @@
+<script>
+    import { session } from '$app/stores';
+    import { onMount } from 'svelte';
+
+    onMount(() => {
+        console.log($session);
+    });
+    
+</script>
+
+{#if $session.gitkrakenUsername}
+    <div class="font-thin text-gray-400 absolute top-3 right-3 text-right">
+        <p>Welcome, <span class="text-primary">{$session.gitkrakenUsername}</span>! 👋</p>
+        <a class="text-gray-400 hover:text-white text-xs" href="/login">Log Out</a>
+    </div>
+{/if}
+
 <div class="flex items-center content-center h-screen w-screen">
     <div class="mx-auto w-[600px] -mt-36 p-6">
         <div>

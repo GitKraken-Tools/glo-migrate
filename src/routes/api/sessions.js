@@ -1,5 +1,7 @@
 import {db} from "$lib/db";
+import { gk } from '$lib/gitkraken';
 import { v4 as uuidv4 } from 'uuid';
+import { getCookie } from '$lib/cookies';
 
 // QUERY PARAMS - none
 export const get = async () => {
@@ -10,9 +12,21 @@ export const get = async () => {
 
 // BODY - target
 export const post = async (event) => {
+    console.log(event);
+    const cookies = event.request.headers.get('cookie');
+    const gitKrakenId = getCookie(cookies, 'gitKrakenId');
     const body = await event.request.json();
     body.createdOn = new Date().getTime();
+    body.createdBy = gitKrakenId;
     body.uuid = uuidv4();
+
+    const profile = await db('users').select('*').where('gitKrakenId', gitKrakenId).then(i => i[0]);
+    const gitKrakenToken = JSON.parse(profile.tokens).find(i => i.type === 'GitKraken').token;
+
+    const cards = await gk(gitKrakenToken).cards(body.gitkrakenBoardId);
+    const users = cards.map(i => i.created_by.id).filter((element, index, array) => array.indexOf(element) === index);
+    body.gitkrakenBoardUsers = JSON.stringify(users);
+
     const session = await db('sessions').insert(body);
     body.id = session[0];
     return {

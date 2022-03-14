@@ -3,7 +3,10 @@ exports.up = function (knex) {
     t.increments("id").primary();
     t.string("uuid");
     t.string("gitkrakenBoardId");
+    t.string("gitkrakenBoardName");
+    t.string("gitkrakenBoardUsers");
     t.string("target");
+    t.string("createdBy");
     t.integer("createdOn");
   });
 };
