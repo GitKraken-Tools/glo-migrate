@@ -5,10 +5,10 @@ export let tokens = {};
 const requestURL = "https://trello.com/1/OAuthGetRequestToken";
 const accessURL = "https://trello.com/1/OAuthGetAccessToken";
 
-const key = process.env['TRELLO_CLIENT_KEY'];
-const secret = process.env['TRELLO_CLIENT_SECRET'];
+const key = import.meta.env.VITE_TRELLO_CLIENT_KEY;
+const secret = import.meta.env.VITE_TRELLO_CLIENT_SECRET;
 
-export let Auth = (uuid, gloId) => {
-    const loginCallback = `http://localhost:3000/api/oauth/trello?uuid=${uuid}&gloId=${gloId}`;
+export let Auth = (uuid, gitkrakenId) => {
+    const loginCallback = `http://localhost:3000/api/trello/oauth/callback?uuid=${uuid}&gitkrakenId=${gitkrakenId}`;
     return new oauth.OAuth(requestURL, accessURL, key, secret, "1.0A", loginCallback, "HMAC-SHA1");
 }
