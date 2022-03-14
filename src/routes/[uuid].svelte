@@ -1,87 +1,105 @@
 <script>
-    import { onMount } from "svelte";
-    import { goto } from "$app/navigation";
-    import { page } from "$app/stores";
-    import { getTimeRemaining } from "$lib/time";
+    import { session as sessionStore } from '$app/stores';
+    export let session;
+    let loading = false;
+    console.log(session);
 
-    import Glo from "$lib/steps/Glo.svelte";
-    import Boards from "$lib/steps/Boards.svelte";
-    import Trello from "$lib/steps/Trello.svelte";
-    import Confirmation from "$lib/steps/Confirmation.svelte";
+    const getAuthenticatedUserCount = () => {
+        return session.gitkrakenBoardUsers.filter(i => {
+            const found = i.tokens?.find(j => j.type === 'Trello');
+            return !!found;
+        }).length;
+    }
 
-    let session = null;
-    let time = null;
+    const migrate = async () => {
+        loading = true;
+        await fetch(`/api/${session.target.toLowerCase()}/migrate`, {method: 'POST', body: JSON.stringify(session)});
+        alert(`${session.gitkrakenBoardName} has been copied to ${session.target} successfully!`);
+        // window.location.href = '/';
+    }
 
-    let stepIndex = 0;
-    let boardId = "";
-
-    onMount(async () => {
-        const res = await fetch(`/api/sessions/${$page.params.uuid}`);
-        if (res.status === 400) {
-            goto("/");
-        }
-        session = await res.json();
-        console.log("SESSION", session);
-        stepIndex = session.step;
-        boardId = session.boardId;
-        time = getTimeRemaining(session.created_at);
-        checkLifespan();
-        let interval = window.setInterval(() => {
-            time = getTimeRemaining(session.created_at);
-            checkLifespan(interval);
-        }, 1000);
-    });
-
-    const checkLifespan = (interval) => {
-        if (time.minutes == 0 && time.seconds == 0) {
-            window.clearInterval(interval);
-            goto("/");
-            // delete the entry
-        }
-    };
+    $: allAuthenticated = getAuthenticatedUserCount() === session.gitkrakenBoardUsers.length;
 </script>
 
-{#if session}
-    <h1 class="card-title">
-        Glo <i class="fas fa-long-arrow-alt-right mx-3" />
-        {session.target}
-    </h1>
-    <p class="font-thin text-accent">
-        <b class="font-bold"
-            ><span class="countdown">
-                <span style="--value:{time.minutes};" />
-            </span></b
-        >
-        minutes and
-        <b class="font-bold"
-            ><span class="countdown">
-                <span style="--value:{time.seconds};" />
-            </span></b
-        > seconds until purge.
-    </p>
+<div class="flex">
+    <div class="flex-1">
+        <h1 class="font-bold">{session.gitkrakenBoardName} <i class="fas fa-arrow-right"/> {session.target}</h1>
+    </div>
+    <div>
+        <p class="font-thin"><i class="fas fa-users"/> {getAuthenticatedUserCount()}/{session.gitkrakenBoardUsers.length}</p>
+    </div>
+</div>
 
-    <div class="my-6 border-accent border-t" />
+{#if !loading}
+    <table class="w-full mt-6 text-left">
+        <tr>
+            <th>Username</th>
+            <th>Gitkraken ID</th>
+            <th class="text-center py-2">{session.target}</th>
+        </tr>
+        {#each session.gitkrakenBoardUsers as user}
+            <tr class="font-thin">
+                <td>{user.gitkrakenUsername || ''}</td>
+                <td>{user.gitkrakenId || ''}</td>
+                <td>
+                    {#if user.tokens?.find(i => i.type === session.target)}
+                        <div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center mx-auto">
+                            <i class="fas fa-check"/>
+                        </div>
+                    {:else}
+                        <div class="w-6 h-6 rounded-full border border-primary flex items-center justify-center mx-auto" />
+                    {/if}
+                </td>
+            </tr>
+        {/each}
+    </table>
 
-    <ul class="w-full steps mb-6">
-        <li class="step {stepIndex >= 0 ? 'step-accent' : ''}">Glo Auth</li>
-        <li class="step {stepIndex >= 1 ? 'step-accent' : ''}">
-            Select Glo Board
-        </li>
-        <li class="step {stepIndex >= 2 ? 'step-accent' : ''}">
-            {session.target} Link
-        </li>
-        <li class="step {stepIndex >= 3 ? 'step-accent' : ''}">Confirmation</li>
-    </ul>
+    {#if !$sessionStore.tokens.find(i => i.type === session.target)}
+        <a href="/api/trello/oauth?uuid={session.uuid}&gitkrakenId={$sessionStore.gitkrakenId}">
+            <button class="bg-trello hover:bg-trello/50 rounded-md w-full p-3 mt-6">
+                <i class="fab fa-trello mr-3"/> Connect My Trello
+            </button>
+        </a>
+    {:else if session.createdBy === $sessionStore.gitkrakenId}
+        <div class="flex gap-6 mt-6">
 
-    {#if stepIndex === 0}
-        <Glo bind:stepIndex />
-    {:else if stepIndex === 1}
-        <Boards bind:session bind:boardId bind:stepIndex />
-    {:else if stepIndex === 2}
-        <Trello bind:session bind:stepIndex bind:boardId />
-    {:else if stepIndex === 3}
-        <Confirmation bind:session bind:boardId />
+            {#if !allAuthenticated}
+                <button on:click={() => migrate()} class="bg-red-500 hover:opacity-80 text-white p-3 rounded-md w-full">
+                    <i class="fas fa-user" />
+                    Migrate Solo
+                </button>
+            {/if}
+            
+            <button on:click={() => migrate()} class="bg-primary {allAuthenticated ? 'hover:opacity-80' : 'opacity-20'} text-white p-3 rounded-md w-full" disabled={!allAuthenticated}>
+                <i class="fas fa-users" />
+                Migrate
+            </button>
+        </div>
+
+        {#if !allAuthenticated}
+            <div class="font-thin text-sm mt-6 border rounded-md p-3">
+                <h1 class="text-2xl font-bold mb-3">
+                    <i class="fas fa-triangle-exclamation text-yellow-500"/> <span>Missing Members</span>
+                </h1>
+                <p class="text-sm">All parties must have their GitKraken and <span class="text-primary">{session.target}</span> accounts connected in order for the tool to properly associate the proper creator.</p>
+                <p class="text-sm mt-3">You can continue solo, but all migrated content will show <span class="text-primary">kyjus25</span> as the creator of that content.</p>
+            </div>
+        {/if}
+    {:else}
+        <p class="mt-6">Waiting on session creator to start the migration</p>
     {/if}
 {:else}
-    <i class="fas fa-cog fa-spin" />
+    <div class="text-center mt-6">
+        <i class="fas fa-gear fa-spin text-6xl" />
+        <p class="mt-3">Copying GitKraken Glo Board</p>
+    </div>
 {/if}
+
+
+
+
+
+
+
+
+

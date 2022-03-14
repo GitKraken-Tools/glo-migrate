@@ -2,8 +2,9 @@
   "name": "glo-migrate",
   "version": "0.0.1",
   "scripts": {
+    "postinstall": "knex migrate:latest --knexfile './knexfile.cjs'",
     "dev": "svelte-kit dev",
-    "build": "svelte-kit build",
+    "build": "svelte-kit build && cp 'db.sqlite' './public/db.sqlite'",
     "package": "svelte-kit package",
     "preview": "svelte-kit preview"
   },
@@ -12,17 +13,15 @@
     "@sveltejs/adapter-node": "next",
     "@sveltejs/kit": "next",
     "autoprefixer": "^10.4.1",
-    "daisyui": "^1.21.0",
+    "knex": "^0.95.15",
     "postcss": "^8.4.5",
+    "sqlite3": "^5.0.2",
     "svelte": "^3.44.0",
     "tailwindcss": "^3.0.8",
     "uuid": "^8.3.2"
   },
   "type": "module",
   "dependencies": {
-    "dotenv": "^10.0.0",
-    "knex": "^0.95.15",
-    "oauth": "^0.9.15",
-    "sqlite3": "^5.0.2"
+    "oauth": "^0.9.15"
   }
 }
