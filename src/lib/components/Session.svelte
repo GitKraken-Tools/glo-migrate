@@ -1,6 +1,13 @@
 <script>
     export let session;
 
+    const getAuthenticatedUserCount = () => {
+        return session.gitkrakenBoardUsers.filter(i => {
+            const found = i.tokens?.find(j => j.type === 'Trello');
+            return !!found;
+        }).length;
+    }
+
     console.log('the session', session);
 </script>
 
@@ -17,7 +24,7 @@
     </div>
     {#if session}
         <div>
-            <p class="font-thin"><i class="fas fa-users"/> 1/{session.gitkrakenBoardUsers.length}</p>
+            <p class="font-thin"><i class="fas fa-users"/> {getAuthenticatedUserCount()}/{session.gitkrakenBoardUsers.length}</p>
         </div>
     {/if}
 </div>
