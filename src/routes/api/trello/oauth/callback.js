@@ -3,24 +3,33 @@ import { Auth, tokens } from '$lib/oauth';
 export const get = async (request) => {
     const uuid = request.url.searchParams.get('uuid');
     const gloId = request.url.searchParams.get('gloId');
+    const token = request.url.searchParams.get('oauth_token');
+    const verifier = request.url.searchParams.get('oauth_verifier');
+    const tokenSecret = tokens[token];
 
-    const authorizeURL = "https://trello.com/1/OAuthAuthorizeToken";
-    const appName = "Glo Migrator";
-    const scope = 'read,write';
-    const expiration = '1hour';
-
-    const getUrl = new Promise((resolve, reject) => {
-        Auth(uuid, gloId).getOAuthRequestToken((error, token, tokenSecret, results) => {
-            tokens[token] = tokenSecret;
-            resolve(`${authorizeURL}?oauth_token=${token}&name=${appName}&scope=${scope}&expiration=${expiration}`);
+    const saveCreds = new Promise((resolve, reject) => {
+        Auth(uuid, gloId).getOAuthAccessToken(token, tokenSecret, verifier, async function (error, accessToken, accessTokenSecret, results) {
+            await fetch(`http://localhost:3000/api/sessions/${uuid}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    "token": { accessToken, accessTokenSecret },
+                    "gloId": gloId,
+                    "type": "Trello",
+                })
+            }).then(i => i.json());
+            resolve(true);
+            // oauth.getProtectedResource("https://api.trello.com/1/members/me", "GET", accessToken, accessTokenSecret, function (error, data, response) {
+            //     // Now we can respond with data to show that we have access to your Trello account via OAuth
+            //     res.send(data)
+            // });
         });
     });
 
-    let url = await getUrl;
+    await saveCreds;
 
     return {
-        headers: { Location: url },
+        headers: { Location: `/${uuid}` },
         status: 302
     }
-
 }
