@@ -4,7 +4,7 @@
   "scripts": {
     "postinstall": "knex migrate:latest --knexfile './knexfile.cjs'",
     "dev": "svelte-kit dev",
-    "build": "svelte-kit build && cp 'db.sqlite' './public/db.sqlite'",
+    "build": "svelte-kit build && cp 'db.sqlite' './build/db.sqlite'",
     "package": "svelte-kit package",
     "preview": "svelte-kit preview"
   },
