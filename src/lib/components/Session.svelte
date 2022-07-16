@@ -8,7 +8,7 @@
         }).length;
     }
 
-    console.log('the session', session);
+    // console.log('the session', session);
 </script>
 
 <div class="rounded-md border border-primary p-3 flex items-center mt-3 cursor-pointer hover:bg-primary/10">

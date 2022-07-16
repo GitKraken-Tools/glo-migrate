@@ -85,6 +85,14 @@ export const post = async (event) => {
             }
         }
 
+        // ADD ATTACHMENTS
+        if (card.attachment_count > 0) {
+            // const gitkrakenAttachments = await gk(creator).attachments(session.gitkrakenBoardId, card.id);
+            // for (const attachment of gitkrakenAttachments) {
+            //     await trello(getItemCreator(attachment.created_by.id)).attachment(getTrelloCardId(card.id), attachment.name, attachment.url);
+            // }
+        }
+
         // CREATE CHECKLIST
         const checkItems = card.description?.text?.split('\n')
             .filter(i => i.startsWith('- [ ] ') || i.startsWith('- [x] '))
@@ -106,12 +114,12 @@ export const post = async (event) => {
 
     
 
-    console.log('CARDS', trelloCards);
+    // console.log('CARDS', trelloCards);
 
     // console.log('TRELLO BOARD', trelloBoard);
     // console.log('should migrate', session);
-    console.log('GK Cards', gitkrakenCards);
-    console.log('GK Users', session.gitkrakenBoardUsers);
+    // console.log('GK Cards', gitkrakenCards);
+    // console.log('GK Users', session.gitkrakenBoardUsers);
     
     return {}
 }

@@ -10,9 +10,9 @@ export const get = async (event) => {
 
     const saveCreds = new Promise((resolve, reject) => {
         Auth(uuid, gitkrakenId).getOAuthAccessToken(token, tokenSecret, verifier, async function (error, accessToken, accessTokenSecret, results) {
-            console.log('uuid', uuid);
-            console.log('gitkrakenId', gitkrakenId);
-            console.log('TOKENS', accessToken, accessTokenSecret);
+            // console.log('uuid', uuid);
+            // console.log('gitkrakenId', gitkrakenId);
+            // console.log('TOKENS', accessToken, accessTokenSecret);
             // SAVE THE TOKENS TO THE USER
             let profile = await db('users').select('*').where('gitKrakenId', gitkrakenId).then(i => i[0]);
             let tokens = JSON.parse(profile.tokens);

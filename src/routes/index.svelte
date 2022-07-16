@@ -4,7 +4,7 @@
 
     export let sessions = [];
 
-    console.log(sessions);
+    // console.log(sessions);
 </script>
 
 <h1 class="font-bold text-2xl">Dashboard</h1>

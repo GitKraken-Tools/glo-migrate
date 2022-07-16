@@ -10,7 +10,7 @@
         newSession.gitkrakenBoardName = boards.find(i => i.id === newSession.gitkrakenBoardId).name;
         const session = await fetch('/api/sessions', {method: 'POST', body: JSON.stringify(newSession)}).then(i => i.json());
         window.location.href = `/${session.uuid}`;
-        console.log(session);
+        // console.log(session);
     }
 </script>
 

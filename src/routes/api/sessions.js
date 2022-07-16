@@ -12,7 +12,7 @@ export const get = async () => {
 
 // BODY - target
 export const post = async (event) => {
-    console.log(event);
+    // console.log(event);
     const cookies = event.request.headers.get('cookie');
     const gitKrakenId = getCookie(cookies, 'gitKrakenId');
     const body = await event.request.json();

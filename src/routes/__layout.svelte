@@ -3,7 +3,7 @@
     import { onMount } from 'svelte';
 
     onMount(() => {
-        console.log($session);
+        // console.log($session);
     });
     
 </script>

@@ -16,7 +16,6 @@ export const get = async (event) => {
             code
         })
     }).then(i => i.json());
-    console.log('GITKRAKEN TOKEN', token.access_token);
     // Get Glo user
     const user = await GloSDK(token.access_token).users.getCurrentUser();
     // Add user item

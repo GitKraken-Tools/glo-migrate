@@ -2,8 +2,8 @@
     import { session as sessionStore } from '$app/stores';
     export let session;
     let loading = false;
-    console.log(session);
-    console.log($sessionStore);
+    // console.log(session);
+    // console.log($sessionStore);
 
     const getAuthenticatedUserCount = () => {
         return session.gitkrakenBoardUsers.filter(i => {
