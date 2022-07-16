@@ -4,10 +4,11 @@ import { trello } from '$lib/trello';
 export const post = async (event) => {
     
     const session = await event.request.json();
-    const creator = session.gitkrakenBoardUsers.find(i => i.gitkrakenId = session.createdBy);
+    const self = JSON.parse(event.request.headers.get('Authorization'));
+    const creator = session.gitkrakenBoardUsers.find(i => i.gitkrakenId = session.createdBy && i.tokens) || self;
 
-    const gitkrakenBoard = await gk(creator.tokens.find(i => i.type === 'GitKraken').token).board(session.gitkrakenBoardId);
-    const gitkrakenCards = await gk(creator.tokens.find(i => i.type === 'GitKraken').token).cards(session.gitkrakenBoardId);
+    const gitkrakenBoard = await gk(creator).board(session.gitkrakenBoardId);
+    const gitkrakenCards = await gk(creator).cards(session.gitkrakenBoardId);
     
     const trelloBoard = await trello(creator).board(session.gitkrakenBoardName);
 
@@ -19,19 +20,20 @@ export const post = async (event) => {
         }));
     }
 
-    let trelloLabels = [];
-    for (const label of gitkrakenBoard.labels.reverse()) {
-        // TODO: add color. Color is RGB but Trello only supports string names.
-        // yellow, purple, blue, red, green, orange, black, sky, pink, lime
-        trelloLabels.push(await trello(creator).label(trelloBoard.id, label.name, 'red').then(i => {
-            i.gitkrakenLabelId = label.id;
-            return i;
-        }));
-    }
+    let trelloLabels = await Promise.all(
+        gitkrakenBoard.labels.reverse().map(label => {
+             // TODO: add color. Color is RGB but Trello only supports string names.
+            // yellow, purple, blue, red, green, orange, black, sky, pink, lime
+            return trello(creator).label(trelloBoard.id, label.name, 'red').then(i => {
+                i.gitkrakenLabelId = label.id;
+                return i;
+            });
+        })
+    );
 
     // Given a GitKraken user ID, return who made the item, otherwise default to creator (admin).
     const getItemCreator = (id) => {
-        return session.gitkrakenBoardUsers.find(i => i.gitkrakenId = id) || creator;
+        return session.gitkrakenBoardUsers.find(i => i.gitkrakenId === id) || creator;
     }
 
     // Given a GK list ID, find the Trello list ID counterpart.
@@ -47,26 +49,27 @@ export const post = async (event) => {
     // TODO: trello supports "customFields" - Use this for milestones?
     // https://developer.atlassian.com/cloud/trello/rest/api-group-customfields/#api-group-customfields
 
-    let trelloCards = [];
-    for (const card of gitkrakenCards) { // This should not be reverse
-        const CREATOR = getItemCreator(card.created_by.id);
-        const labelIds = card.labels.map(i => getTrelloLabelId(i.id));
-        const listId = getTrelloListId(card.column_id);
-        const desc = card.description?.text?.split('\n') // The card description has a separate created by field.
-            .filter(i => !i.startsWith('- [ ] ') && !i.startsWith('- [x] ')) // Filter out checklists
-            .join('\n'); 
-        trelloCards.push(await trello(CREATOR).card(
-            listId,
-            card.name,
-            desc,
-            card.due_date,
-            null,
-            labelIds
-        ).then(i => {
-            i.gitkrakenCardId = card.id;
-            return i;
-        }));
-    }
+    let trelloCards = await Promise.all(
+        gitkrakenCards.map(card => {
+            const CREATOR = getItemCreator(card.created_by.id);
+            const labelIds = card.labels.map(i => getTrelloLabelId(i.id));
+            const listId = getTrelloListId(card.column_id);
+            const desc = card.description?.text?.split('\n') // The card description has a separate created by field.
+                .filter(i => !i.startsWith('- [ ] ') && !i.startsWith('- [x] ')) // Filter out checklists
+                .join('\n'); 
+            return trello(CREATOR).card(
+                listId,
+                card.name,
+                desc,
+                card.due_date,
+                null,
+                labelIds
+            ).then(i => {
+                i.gitkrakenCardId = card.id;
+                return i;
+            });
+        })
+    )
 
     // Given a GK card ID, find the Trello card ID counterpart.
     const getTrelloCardId = (gitkrakenCardId) => {

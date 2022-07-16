@@ -3,6 +3,7 @@
     export let session;
     let loading = false;
     console.log(session);
+    console.log($sessionStore);
 
     const getAuthenticatedUserCount = () => {
         return session.gitkrakenBoardUsers.filter(i => {
@@ -13,7 +14,7 @@
 
     const migrate = async () => {
         loading = true;
-        await fetch(`/api/${session.target.toLowerCase()}/migrate`, {method: 'POST', body: JSON.stringify(session)});
+        await fetch(`/api/${session.target.toLowerCase()}/migrate`, {method: 'POST', headers: {'Authorization': JSON.stringify($sessionStore)}, body: JSON.stringify(session)});
         alert(`${session.gitkrakenBoardName} has been copied to ${session.target} successfully!`);
         // window.location.href = '/';
     }

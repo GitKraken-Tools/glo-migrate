@@ -1,6 +1,7 @@
 import GloSDK from "@axosoft/glo-sdk";
 
-export const gk = (token) => {
+export const gk = (creator) => {
+    const token = creator.tokens.find(i => i.type === 'GitKraken').token;
     return {
         boards: () => GloSDK(token).boards.getAll({
             fields: ["name", "labels", "columns", "archived_columns"],

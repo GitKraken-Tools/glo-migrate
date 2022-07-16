@@ -21,9 +21,9 @@ export const post = async (event) => {
     body.uuid = uuidv4();
 
     const profile = await db('users').select('*').where('gitKrakenId', gitKrakenId).then(i => i[0]);
-    const gitKrakenToken = JSON.parse(profile.tokens).find(i => i.type === 'GitKraken').token;
+    if (profile) { profile.tokens = JSON.parse(profile.tokens); }
 
-    const cards = await gk(gitKrakenToken).cards(body.gitkrakenBoardId);
+    const cards = await gk(profile).cards(body.gitkrakenBoardId);
     const users = cards.map(i => i.created_by.id).filter((element, index, array) => array.indexOf(element) === index);
     body.gitkrakenBoardUsers = JSON.stringify(users);
 
