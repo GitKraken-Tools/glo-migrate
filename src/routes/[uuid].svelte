@@ -17,6 +17,7 @@
         await fetch(`/api/${session.target.toLowerCase()}/migrate`, {method: 'POST', headers: {'Authorization': JSON.stringify($sessionStore)}, body: JSON.stringify(session)});
         alert(`${session.gitkrakenBoardName} has been copied to ${session.target} successfully!`);
         // window.location.href = '/';
+        loading = false;
     }
 
     $: allAuthenticated = getAuthenticatedUserCount() === session.gitkrakenBoardUsers.length;
