@@ -14,6 +14,11 @@ export const gk = (creator) => {
                 "archived_date", "assignees", "attachment_count", "column_id", "comment_count", "created_by", "created_date", "due_date", "description", "labels", "name", "total_task_count", "milestone", "is_divider",
             ],
         }),
+        comments: (boardId, cardId) => GloSDK(token).boards.cards.comments.get(boardId, cardId, {
+            fields: [
+                "created_by", "updated_by", "reactions", "text", "reactions.reacted",
+            ]
+        }),
         user: () => GloSDK(token).users.getCurrentUser()
     }
 }

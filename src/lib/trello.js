@@ -28,6 +28,11 @@ export const trello = (creator) => {
                 resolve(JSON.parse(data));
             });
         }),
+        comment: (cardId, text) => new Promise((resolve, reject) => {
+            Auth(null, creator.gitkrakenId).getProtectedResource(encodeURI(`https://api.trello.com/1/cards/${cardId}/actions/comments?text=${text}`), "POST", tokens.accessToken, tokens.accessTokenSecret, function (error, data, response) {
+                resolve(JSON.parse(data));
+            });
+        }),
         checklist: (cardId) => new Promise((resolve, reject) => {
             Auth(null, creator.gitkrakenId).getProtectedResource(encodeURI(`https://api.trello.com/1/checklists?idCard=${cardId}&name=Task List`), "POST", tokens.accessToken, tokens.accessTokenSecret, function (error, data, response) {
                 resolve(JSON.parse(data));

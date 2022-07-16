@@ -77,6 +77,15 @@ export const post = async (event) => {
     }
 
     for (const card of gitkrakenCards) {
+        // ADD COMMENTS
+        if (card.comment_count > 0) {
+            const gitkrakenComments = await gk(creator).comments(session.gitkrakenBoardId, card.id);
+            for (const comment of gitkrakenComments) {
+                await trello(getItemCreator(comment.created_by.id)).comment(getTrelloCardId(card.id), comment.text);
+            }
+        }
+
+        // CREATE CHECKLIST
         const checkItems = card.description?.text?.split('\n')
             .filter(i => i.startsWith('- [ ] ') || i.startsWith('- [x] '))
             .map(i => { 
