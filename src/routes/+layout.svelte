@@ -1,16 +1,11 @@
 <script>
-    import { session } from '$app/stores';
-    import { onMount } from 'svelte';
-
-    onMount(() => {
-        // console.log($session);
-    });
-    
+    import { page } from '$app/stores';
+    import "../style.css";
 </script>
 
-{#if $session.gitkrakenUsername}
+{#if $page.data.user?.gitkrakenUsername}
     <div class="font-thin text-gray-400 absolute top-3 right-3 text-right">
-        <p>Welcome, <span class="text-primary">{$session.gitkrakenUsername}</span>! 👋</p>
+        <p>Welcome, <span class="text-primary">{$page.data.user.gitkrakenUsername}</span>! 👋</p>
         <a class="text-gray-400 hover:text-white text-xs mr-3" href="/">Dashboard</a>
         <a class="text-gray-400 hover:text-white text-xs" href="/login">Log Out</a>
     </div>
@@ -28,10 +23,3 @@
         </div>
     </div>
 </div>
-
-<style global>
-    @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;700&display=swap");
-    @tailwind base;
-    @tailwind components;
-    @tailwind utilities;
-</style>
