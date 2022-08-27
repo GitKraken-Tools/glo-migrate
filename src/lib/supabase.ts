@@ -5,14 +5,16 @@ const supabaseKey: string = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdX
 export const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey);
 
 // Get all entries
-export const select = async <T>(table: string): Promise<T[]> => await supabase.from(table).select().then(i => i.data ? i.data : []);
+export const select = async <T>(table: string): Promise<Array<T>> => await supabase.from(table).select().then(i => i.data ? i.data : []);
 
 // Find one entry
-export const find = async <T>(table: string, key: string, value: string): Promise<T[]> => await (await supabase.from(table).select().eq(key, value).then(i => i.data ? i.data : []));
+export const find = async <T>(table: string, key: string, value: string): Promise<Array<T>> => await (await supabase.from(table).select().eq(key, value).then(i => i.data ? i.data : []));
+
+// Find one entry inside array
+export const contains = async <T>(table: string, key: string, value: string): Promise<Array<T>> => await (await supabase.from(table).select().contains(key, [value]).then(i => i.data ? i.data : []));
 
 // Create a new entry
 export const create = async <T extends {createdOn?: string}>(table: string, payload: T): Promise<T> => {
     payload.createdOn = new Date().getTime().toString();
-    console.log('trying create of', table);
     return await supabase.from(table).insert(payload).throwOnError(true).then(i => i.data ? i.data[0] : null, err => console.log('an error occured', err));
 };

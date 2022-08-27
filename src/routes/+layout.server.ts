@@ -1,6 +1,6 @@
 import { getCookie } from '$lib/cookies';
-import { find } from '$lib/supabase';
-import { Tables, TokenType, type Token } from '$lib/types';
+import { contains, find, select } from '$lib/supabase';
+import { Tables, TokenType, type Profile, type Session, type Token } from '$lib/types';
 import { redirect } from '@sveltejs/kit';
 import type { LayoutServerLoadEvent } from './$types';
 
@@ -13,13 +13,20 @@ export const load = async (event: LayoutServerLoadEvent) => {
         throw redirect(307, '/login');
     }
 
-    const tokens = await find(Tables.TOKENS, 'gitkrakenId', gitkrakenId);
-    const sessions = await find(Tables.SESSIONS, 'gitkrakenId', gitkrakenId);
-    const profile = await find(Tables.PROFILES, 'gitkrakenId', gitkrakenId).then(i => i[0]);
+    const tokens: Token[] = await select(Tables.TOKENS);
+    const sessions: Session[] = await contains(Tables.SESSIONS, 'gitkrakenBoardMemberIds', gitkrakenId);
+    const profile: Profile = await find(Tables.PROFILES, 'gitkrakenId', gitkrakenId).then(i => i[0] as Profile);
+
+    let activeProfiles: { [key: string]: number; } = {};
+    sessions.map(i => i as Session).forEach(i => {
+        if (!i.id) { return }
+        activeProfiles[i.id] = i.gitkrakenBoardMemberIds.filter(j => tokens.find(k => k.type === TokenType.TRELLO && k.gitkrakenId === j)).length;
+    });
 
     return {
         profile,
         sessions,
-        tokens
+        tokens: tokens.filter(i => i.gitkrakenId === gitkrakenId),
+        activeProfiles
     }
 }
