@@ -2,7 +2,7 @@
     import Session from "$lib/components/Session.svelte";
     import { page } from '$app/stores';
 
-    // console.log(sessions);
+    console.log($page);
 </script>
 
 <h1 class="font-bold text-2xl">Dashboard</h1>

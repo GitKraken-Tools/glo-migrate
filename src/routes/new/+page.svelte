@@ -1,18 +1,14 @@
 <script lang="ts">
     import { page } from '$app/stores';
+    import type { NewSessionPayload } from '../api/sessions/+server';
 
-    console.log($page);
-
-    let newSession = {
-        gitkrakenBoardId: $page.data.boards[0]?.id,
-        target: 'Trello'
+    let newSession: NewSessionPayload = {
+        gitkrakenBoardId: $page.data.boards[0]?.id
     }
 
     const create = async () => {
-        // newSession.gitkrakenBoardName = boards.find(i => i.id === newSession.gitkrakenBoardId).name;
         const session = await fetch('/api/sessions', {method: 'POST', body: JSON.stringify(newSession)}).then(i => i.json());
-        window.location.href = `/${session.uuid}`;
-        // console.log(session);
+        window.location.href = `/${session.id}`;
     }
 </script>
 
@@ -30,7 +26,7 @@
     
     <div class="flex-1">
         <p>Target</p>
-        <select bind:value={newSession.target} type="text" class="bg-white/10 border rounded-md p-3 w-full">
+        <select type="text" class="bg-white/10 border rounded-md p-3 w-full">
             <option>Trello</option>
         </select>
     </div>
