@@ -1,16 +1,16 @@
 <script>
     import { page } from '$app/stores';
-import { TokenType } from '$lib/types';
+    import { TokenType } from '$lib/types';
     let loading = false;
-    console.log($page);
+    // console.log($page);
     // console.log($sessionStore);
 
     const migrate = async () => {
-        // loading = true;
-        // await fetch(`/api/${session.target.toLowerCase()}/migrate`, {method: 'POST', headers: {'Authorization': JSON.stringify($sessionStore)}, body: JSON.stringify(session)});
-        // alert(`${session.gitkrakenBoardName} has been copied to ${session.target} successfully!`);
-        // // window.location.href = '/';
-        // loading = false;
+        loading = true;
+        await fetch(`/api/trello/migrate`, {method: 'POST'});
+        alert(`${$page.data.session.gitkrakenBoardName} has been copied to Trello successfully!`);
+        window.location.href = '/';
+        loading = false;
     }
 
     $: allAuthenticated = $page.data.activeProfiles[$page.data.session.id] === $page.data.session.gitkrakenBoardMemberIds.length;
