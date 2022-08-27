@@ -1,2 +1,19 @@
-<h1 class="text-orange-500">Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script>
+    import Session from "$lib/components/Session.svelte";
+    import { page } from '$app/stores';
+
+    // console.log(sessions);
+</script>
+
+<h1 class="font-bold text-2xl">Dashboard</h1>
+<p class="font-thin text-sm mb-6">Here you will find all of your pending migrations</p>
+
+{#each $page.data.sessions as session}
+    <a href="/{session.uuid}">
+        <Session {session} />
+    </a>
+{/each}
+
+<a href="/new">
+    <Session />
+</a>

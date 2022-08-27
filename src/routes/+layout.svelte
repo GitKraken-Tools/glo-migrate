@@ -3,9 +3,9 @@
     import "../style.css";
 </script>
 
-{#if $page.data.user?.gitkrakenUsername}
+{#if $page.data.profile?.gitkrakenUsername}
     <div class="font-thin text-gray-400 absolute top-3 right-3 text-right">
-        <p>Welcome, <span class="text-primary">{$page.data.user.gitkrakenUsername}</span>! 👋</p>
+        <p>Welcome, <span class="text-primary">{$page.data.profile.gitkrakenUsername}</span>! 👋</p>
         <a class="text-gray-400 hover:text-white text-xs mr-3" href="/">Dashboard</a>
         <a class="text-gray-400 hover:text-white text-xs" href="/login">Log Out</a>
     </div>
