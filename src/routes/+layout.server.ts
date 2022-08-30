@@ -9,7 +9,7 @@ export const load = async (event: LayoutServerLoadEvent) => {
     const cookies = event.request.headers.get('cookie') || '';
     const gitkrakenId = getCookie(cookies, 'gitkrakenId');
 
-    if (!gitkrakenId || (!gitkrakenId && event.url.pathname !== '/login')) {
+    if (!gitkrakenId && event.url.pathname !== '/login') {
         throw redirect(307, '/login');
     }
 

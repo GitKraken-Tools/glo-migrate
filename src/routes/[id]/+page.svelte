@@ -7,9 +7,9 @@
 
     const migrate = async () => {
         loading = true;
-        await fetch(`/api/trello/migrate`, {method: 'POST'});
-        alert(`${$page.data.session.gitkrakenBoardName} has been copied to Trello successfully!`);
-        window.location.href = '/';
+        await fetch(`/api/trello/migrate?sessionId=${$page.data.session.id}`, {method: 'POST'});
+        // alert(`${$page.data.session.gitkrakenBoardName} has been copied to Trello successfully!`);
+        // window.location.href = '/';
         loading = false;
     }
 
